@@ -146,9 +146,19 @@ class PMDataHandler extends DataHandler
 
 		// Assign the sender information to the data.
 		$pm['sender'] = array(
-			"uid" => $sender['uid'],
-			"username" => $sender['username']
+			"uid" => $pm['fromid'],
+			"username" => ''
 		);
+
+		if(!empty($sender['uid']))
+		{
+			$pm['sender']['uid'] = $sender['uid'];
+		}
+
+		if(!empty($sender['username']))
+		{
+			$pm['sender']['username'] = $sender['username'];
+		}
 
 		return true;
 	}
@@ -287,7 +297,7 @@ class PMDataHandler extends DataHandler
 		$sender_permissions = user_permissions($pm['fromid']);
 
 		// Are we trying to send this message to more users than the permissions allow?
-		if($sender_permissions['maxpmrecipients'] > 0 && count($recipients) > $sender_permissions['maxpmrecipients'] && $this->admin_override != true)
+		if(isset($sender_permissions['maxpmrecipients']) && $sender_permissions['maxpmrecipients'] > 0 && count($recipients) > $sender_permissions['maxpmrecipients'] && $this->admin_override != true)
 		{
 			$this->set_error("too_many_recipients", array($sender_permissions['maxpmrecipients']));
 		}
